@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>كاميرا المتصفح - iPhone</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #f9f9f9;
+      text-align: center;
+      padding: 20px;
+      direction: rtl;
+    }
+
+    video, canvas {
+      width: 90%;
+      max-width: 500px;
+      margin: 15px 0;
+      border: 2px solid #333;
+      border-radius: 10px;
+    }
+
+    button {
+      margin: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #2980b9;
+    }
+
+    #photo-container {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h2>📷 الوصول إلى كاميرا iPhone</h2>
+  <p>اضغط "سماح" عند طلب الوصول للكاميرا</p>
+
+  <video id="video" autoplay playsinline></video>
+  <br />
+  <button onclick="capturePhoto()">📸 التقط صورة</button>
+  <button onclick="downloadPhoto()">💾 حفظ الصورة</button>
+
+  <div id="photo-container">
+    <canvas id="canvas"></canvas>
+  </div>
+
+  <script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    async function startCamera() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+        video.srcObject = stream;
+      } catch (error) {
+        alert('⚠️ لم نتمكن من الوصول إلى الكاميرا: ' + error.message);
+      }
+    }
+
+    function capturePhoto() {
+      const width = video.videoWidth;
+      const height = video.videoHeight;
+      canvas.width = width;
+      canvas.height = height;
+      ctx.drawImage(video, 0, 0, width, height);
+    }
+
+    function downloadPhoto() {
+      const link = document.createElement('a');
+      link.download = 'photo.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+
+    startCamera();
+  </script>
+</body>
+</html>
